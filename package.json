@@ -1,0 +1,26 @@
+{
+  "name": "mern-authentication",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" : "nodemon api/index.js",
+    "start" : "node api/index.js" 
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Madanraj0519/Mern-authentication.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Madanraj0519/Mern-authentication/issues"
+  },
+  "homepage": "https://github.com/Madanraj0519/Mern-authentication#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.3"
+  }
+}
