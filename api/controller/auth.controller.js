@@ -11,10 +11,9 @@ const signUp = async(req, res, next) => {
     await newUser.save();
     res.status(201).json({ message : "User created and saved successfully"});
    }catch(err){
-    // handling middleware error
+    // handling middleware errors here
      next(err);
-
-    //  handling custom error handler
+    //  handling custom error handler with the help of error handler function
     // next(errorHandler(300, 'something went wrong'));
    }
 };
