@@ -44,6 +44,35 @@ const signIn = async (req, res, next) => {
    }
 };
 
+const google = async (req, res, next) => {
+    try{
+        const user = await userModel.findOne({userEmail : req.body.userEmail})
+        if(user){
+            const token = jwt.sign({ id : user._id}, process.env.JWT_SECRET);
+            const {userPassword : hashPassword, ...rest} = user._doc;
+            const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+            res.cookie('access-token', token, {httpOnly: true, expires : expiryDate}).status(200).json(rest);
+        }else{
+            const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashPassword = bcrypt.hashSync(generatePassword, 10);
+            const newUser = new userModel({
+                userName : req.body.userName.
+                     split(' ').join('').toLowerCase() + Math.floor(Math.random() * 10000).toString(),
+                userEmail : req.body.userEmail,
+                userPassword : hashPassword,
+                userPhoto  : req.body.userPhoto
+            });
+            await newUser.save();
+            const token = jwt.sign({ id : newUser._id}, process.env.JWT_SECRET);
+            const {userPassword : hashPassword2, ...rest} = newUser._doc;
+            const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+            res.cookie('access-token', token, {httpOnly: true, expires : expiryDate}).status(200).json(rest);
+        }
+    }catch(err){
+        next(err);
+    }
+}
 
 module.exports = signUp;
 module.exports = signIn;
+module.exports = google;
