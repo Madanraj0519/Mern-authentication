@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom'
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
 
 const SignIn= () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {loading, error} = useSelector( state => state.user);
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.id] : e.target.value });
@@ -19,8 +20,7 @@ const SignIn= () => {
     e.preventDefault();  /* this will prevent refreshing the page when we submit the form*/ 
 
     try{
-      setLoading(true);
-      setError(false);
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin/', {
         method: 'POST',
         headers: {
@@ -30,21 +30,20 @@ const SignIn= () => {
       });
       const data = await res.json();
       // console.log(data);
-      setLoading(false);
       if(data.success === false){
-        setError(true);
-        setErrorMessage(data.message);
+        dispatch(signInFailure(data.message));
+      }else{
+        dispatch(signInSuccess(data));
+        navigate('/');
       }
-      navigate('/');
     }catch(e){
-      setLoading(false);
-      setError(true);
+      dispatch(signInFailure(error));
     }
   };
 
   return (
     <div  className='max-w-lg mx-auto pt-2'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign Up</h1>
+      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input type='text-' placeholder='User Email' id='userEmail' className='bg-slate-100 p-3 rounded-lg'  onChange={handleChange} />
         <input type='password' placeholder='User Password' id='userPassword' className='bg-slate-100 p-3 rounded-lg'  onChange={handleChange}/>
@@ -56,7 +55,7 @@ const SignIn= () => {
            <span className='text-blue-500'>Sign Up</span>
         </Link>
       </div>
-      <p className='text-red-500 mt-5'>{error && errorMessage}</p>
+      <p className='text-red-500 mt-5'>{error ? error || 'something went wrong' : ''}</p>
     </div>
   )
 }
