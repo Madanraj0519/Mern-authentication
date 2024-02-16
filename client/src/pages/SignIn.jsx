@@ -33,10 +33,10 @@ const SignIn= () => {
       // console.log(data);
       if(data.success === false){
         dispatch(signInFailure(data));
-      }else{
-        dispatch(signInSuccess(data));
-        navigate('/');
       }
+      navigate('/');
+      dispatch(signInSuccess(data));
+      
     }catch(e){
       dispatch(signInFailure(error));
     }
