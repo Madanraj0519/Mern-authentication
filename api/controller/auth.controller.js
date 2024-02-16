@@ -21,8 +21,8 @@ const signUp = async(req, res, next) => {
 
 
 const signIn = async (req, res, next) => {
-   try{
     const {userEmail, userPassword} = req.body;
+   try{
     const validUser = await userModel.findOne({userEmail});
     if(!validUser){
         return next(errorHandler(404, 'user not found'));
@@ -36,7 +36,7 @@ const signIn = async (req, res, next) => {
     /* Just hidding the password from the client side for the security purpose*/
     const {userPassword : hashPassword, ...restDetails} = validUser._doc;
     const expiryDate = new Date(Date.now() + 3600000); // 1 hour
-    res.cookie('access-token', token, {httpOnly: true, expires : expiryDate}).
+    res.cookie('access_token', token, {httpOnly: true, expires : expiryDate}).
     status(200).
     json(restDetails);
    }catch(err){
@@ -51,7 +51,7 @@ const google = async (req, res, next) => {
             const token = jwt.sign({ id : user._id}, process.env.JWT_SECRET);
             const {userPassword : hashPassword, ...rest} = user._doc;
             const expiryDate = new Date(Date.now() + 3600000); // 1 hour
-            res.cookie('access-token', token, {httpOnly: true, expires : expiryDate}).status(200).json(rest);
+            res.cookie('access_token', token, {httpOnly: true, expires : expiryDate}).status(200).json(rest);
         }else{
             const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
             const hashPassword = bcrypt.hashSync(generatePassword, 10);
@@ -66,7 +66,7 @@ const google = async (req, res, next) => {
             const token = jwt.sign({ id : newUser._id}, process.env.JWT_SECRET);
             const {userPassword : hashPassword2, ...rest} = newUser._doc;
             const expiryDate = new Date(Date.now() + 3600000); // 1 hour
-            res.cookie('access-token', token, {httpOnly: true, expires : expiryDate}).status(200).json(rest);
+            res.cookie('access_token', token, {httpOnly: true, expires : expiryDate}).status(200).json(rest);
         }
     }catch(err){
         next(err);
